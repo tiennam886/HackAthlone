@@ -11,7 +11,6 @@ Set in the year 2150, players step into the boots of a **Heritage Ranger** guide
 - **Tactical Solar System Map:** An interactive canvas radar map spanning the inner planets, asteroid belt, and deep interstellar boundary.
 - **Visual Novel Presentation:** Cinematic character standees (ARCHIE on the left, Ranger on the right) with active speaker highlighting, subtitle consoles, and live archival NASA telemetry displays.
 - **Authentic NASA Mission Challenges:** 9 custom educational Codex challenges grounded 100% in official NASA science data and telemetry.
-- **Anti-Bruteforce Learning Mechanism:** An incorrect answer locks choices and directly links the player to official NASA archives for research before allowing a retry.
 - **Declassified Archival Gallery:** Unlocking each beacon activates historical mission photos and detailed scientific debriefs.
 
 ---
