@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Legacy Guardians: NASA Discarded Space Equipment</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div id="game-container">
+    <!-- MÀN HÌNH CHÍNH CANVAS RENDER RADAR & CÁC ĐIỂM HOTSPOT POINT-AND-CLICK -->
+    <canvas id="gameCanvas" width="1280" height="720"></canvas>
+
+    <div id="ui-overlay">
+      <!-- THANH TRẠNG THÁI HUD TRÊN CÙNG -->
+      <header id="status-bar">
+        <div id="mission-info">
+          <span class="hud-label">SECTOR:</span> <span id="current-sector">SOLAR SYSTEM COMMAND</span> |
+          <span class="hud-label">TARGET ARTIFACT:</span> <span id="target-artifact">ORBITAL MAP</span>
+        </div>
+        <div id="beacons-counter">LEGACY BEACONS SECURED: <span id="beacon-count">0</span> / 9</div>
+      </header>
+
+      <!-- 1. MÀN HÌNH CHÀO MỪNG (WELCOME BRIEFING MODAL) -->
+      <div id="welcome-modal" class="hud-panel modal-screen">
+        <div class="welcome-avatar-box archie-glow">
+          <!-- /* CHÈN ẢNH ĐẠI DIỆN ARCHIE TẠI ĐÂY (VD: Archie.png hoặc assets/img/avatar_archie.png) */ -->
+          <img id="welcome-archie-img" src="assets/img/avatar_archie.png" class="avatar-full">
+          <div id="welcome-archie-fallback" class="avatar-fallback" style="display: none;">AI ARCHIE</div>
+        </div>
+        <div class="briefing-content">
+          <h2>SOLAR SYSTEM HERITAGE INITIATIVE - 2150</h2>
+          <p id="welcome-text">
+            "Greetings, Ranger. For over a century, human machines dared to explore the silent valleys of Mars, the cratered hulls of asteroids, and the dark boundaries of the outer rim. Designed for fleeting weeks, they survived for years, serving as the sole emissaries of human curiosity.
+            <br><br>
+            Now, rogue terraforming corporations and automated scrapper fleets are sweeping across the Solar System, about to crush these pioneers into building slag. Your mission: travel to 9 legendary NASA heritage sites, understand their historic achievements, bypass corrupted telemetry, and erect the Legacy Temporal Shields before their memory is wiped clean."
+          </p>
+          <button id="start-mission-btn" class="hud-btn">INITIALIZE FLIGHT COMPUTER</button>
+        </div>
+      </div>
+
+      <!-- 2. BANNER MÔ PHỎNG HIỂM HỌA KHI ĐÁP XUỐNG BẢN ĐỒ (SECTOR INTRO CINEMATIC) -->
+      <div id="sector-intro-modal" class="hud-panel modal-screen" style="display: none;">
+        <div class="intro-media-wrapper">
+          <!-- /* CHÈN VIDEO HIỂM HỌA HOẶC ẢNH ĐỘNG TẠI ĐÂY (VD: assets/video/threat_descent.mp4) */ -->
+          <video id="intro-video" class="media-cover" autoplay muted loop playsinline style="display: none;"></video>
+          <!-- /* HOẶC CHÈN ẢNH TĨNH HIỂM HỌA TẠI ĐÂY */ -->
+          <img id="intro-image" class="media-cover" alt="Sector Threat Scan" style="display: none;">
+          <div id="intro-placeholder" class="cinematic-placeholder">
+            [TRANSMISSION: ATMOSPHERIC DESCENT & THREAT RECONNAISSANCE]
+          </div>
+        </div>
+        <div class="intro-text-box">
+          <h2 id="intro-title">APPROACHING TARGET SECTOR...</h2>
+          <p id="intro-desc">Scanning planetary surface for historical robotic signatures...</p>
+          <button id="intro-proceed-btn" class="hud-btn">INITIATE SURFACE SCAN &raquo;</button>
+        </div>
+      </div>
+
+      <!-- 3. KHUNG HỘI THOẠI TOÀN MÀN HÌNH (VISUAL NOVEL: ARCHIE TRÁI - RANGER PHẢI - CONSOLE GIỮA) -->
+      <div id="dialogue-box" class="hud-panel" style="display: none;">
+        <!-- NHÂN VẬT ARCHIE (BÊN TRÁI, ĐỨNG THẲNG, CAO TO) -->
+        <div id="character-archie" class="character-standee left-character">
+          <!-- /* CHÈN ẢNH TOÀN THÂN / NỬA NGƯỜI ARCHIE TẠI ĐÂY */ -->
+          <img id="archie-sprite" src="assets/img/avatar_archie.png" class="sprite-img">
+          <div class="character-tag tag-left">ARCHIE [AI COMPANION]</div>
+        </div>
+
+        <!-- BẢNG CONSOLE TRUNG TÂM (CHIẾM TRỌN KHÔNG GIAN CÒN LẠI) -->
+        <div class="center-console">
+          <!-- NỬA TRÊN: MÀN HÌNH CHIẾU TƯ LIỆU / VIDEO NASA / SƠ ĐỒ KỸ THUẬT -->
+          <div id="dialogue-screen" class="console-screen">
+            <!-- /* CHÈN ẢNH TƯ LIỆU LỊCH SỬ NASA CHO TỪNG ĐOẠN THOẠI */ -->
+            <img id="dialogue-media-img" src="" alt="NASA Telemetry Image" class="media-cover" style="display: none;">
+            <!-- /* CHÈN THƯỚC PHIM TƯ LIỆU NASA NGẮN (MP4/WEBM) CHO ĐOẠN THOẠI */ -->
+            <video id="dialogue-media-video" src="" class="media-cover" autoplay muted loop playsinline style="display: none;"></video>
+            <div id="media-placeholder" class="screen-placeholder">
+              <span class="scanline-text">[NASA ARCHIVAL TELEMETRY FEED]</span>
+            </div>
+            <div class="screen-caption" id="media-caption">SURFACE SCAN: Chryse Planitia</div>
+          </div>
+
+          <!-- NỬA DƯỚI: PHỤ ĐỀ, CHÚ THÍCH & LỜI THOẠI NHÂN VẬT -->
+          <div class="console-text-box">
+            <div class="speaker-banner" id="speaker-name">ARCHIE AI</div>
+            <p id="dialogue-text">Initializing transmission stream from NASA deep space network...</p>
+            <div class="dialogue-footer">
+              <span class="hint-text">Press [SPACE] or Click Button to Continue</span>
+              <button id="dialogue-next-btn" class="hud-btn">CONTINUE LOG &raquo;</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- NHÂN VẬT RANGER (BÊN PHẢI, ĐỨNG ĐỐI DIỆN ARCHIE) -->
+        <div id="character-ranger" class="character-standee right-character">
+          <!-- /* CHÈN ẢNH PHI HÀNH GIA RANGER TẠI ĐÂY (VD: assets/img/avatar_ranger.png) */ -->
+          <img id="ranger-sprite" src="assets/img/avatar_ranger.png" class="sprite-img">
+          <div class="character-tag tag-right">RANGER [GUARDIAN]</div>
+        </div>
+      </div>
+
+      <!-- 4. KHUNG CÂU ĐỐ CODEX CHALLENGE -->
+      <div id="puzzle-modal" class="hud-panel modal-screen" style="display: none;">
+        <!-- KHUNG HIỂN THỊ CÂU HỎI & CÁC LỰA CHỌN -->
+        <div id="puzzle-quiz-view">
+          <h3 id="puzzle-title">CODEX AUTHENTICATION CHALLENGE</h3>
+          <p id="puzzle-prompt">Codex query description...</p>
+          <div id="puzzle-options" class="options-container"></div>
+        </div>
+
+        <!-- MÀN HÌNH KHÓA KHI TRẢ LỜI SAI: CHỈ HIỆN LINK NASA + NÚT THỬ LẠI / VỀ MENU -->
+        <div id="puzzle-feedback" class="feedback-panel" style="display: none;">
+          <div class="alert-icon">&#9888; ACCESS DENIED: TELEMETRY MISMATCH</div>
+          <p id="feedback-text" class="error-text">
+            Security protocols locked. Your parameters do not correlate with historical NASA telemetry records.
+          </p>
+          <div class="nasa-source-box">
+            <span class="source-label">OFFICIAL NASA READING ARCHIVE:</span>
+            <!-- LINK TƯ LIỆU NASA TỰ ĐỘNG CẬP NHẬT THEO TỪNG NHIỆM VỤ -->
+            <a id="feedback-link" href="#" target="_blank" rel="noopener noreferrer" class="nasa-link">
+              [ACCESS OFFICIAL NASA MISSION ARCHIVE] &raquo;
+            </a>
+          </div>
+          <div class="feedback-actions">
+            <button id="try-again-btn" class="hud-btn btn-retry">&#x21bb; TRY AGAIN</button>
+            <button id="return-menu-btn" class="hud-btn btn-menu">&#x2302; RETURN TO MAIN MENU</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- 5. MÀN HÌNH GIẢI MẬT & CHIẾU ẢNH LỊCH SỬ KHI TRẢ LỜI ĐÚNG (DEBRIEF GALLERY) -->
+      <div id="success-modal" class="hud-panel modal-screen" style="display: none;">
+        <h3 class="success-title">BEACON SECURED: TEMPORAL SHIELD RESTORED</h3>
+        <div class="archive-gallery-wrapper">
+          <!-- /* CHÈN ẢNH LỊCH SỬ HOẶC FOOTAGE HẠ CÁNH THẬT TỪ NASA SAU KHI THẮNG */ -->
+          <img id="success-artifact-img" alt="NASA Historic Photo" class="media-cover" style="display: none;">
+          <div id="artifact-img-placeholder" class="archive-placeholder">
+            [NASA HISTORIC DISCOVERY RECORD & DECLASSIFIED ARCHIVE]
+          </div>
+        </div>
+        <div class="debrief-text-container">
+          <h4 id="debrief-heading" class="hud-label">ARCHIE DECLASSIFIED SCIENCE LOG:</h4>
+          <p id="success-debrief-text"></p>
+        </div>
+        <button id="close-success-btn" class="hud-btn">TRANSMIT DATA TO ORBITAL ARCHIVES &raquo;</button>
+      </div>
+
+      <!-- 6. MÀN KẾT TOÀN DIỆN (EPILOGUE KHI GIẢI CỨU ĐỦ 9 DI SẢN) -->
+      <div id="epilogue-modal" class="hud-panel modal-screen" style="display: none;">
+        <h1 class="epilogue-title">THE CONSTELLATION OF MEMORY</h1>
+        <div class="epilogue-scroll-container">
+          <p id="epilogue-text"></p>
+        </div>
+        <button id="restart-btn" class="hud-btn">&#x21bb; REPLAY MISSION ARCHIVE</button>
+      </div>
+
+      <!-- THANH ĐIỀU HƯỚNG DƯỚI CÙNG -->
+      <footer id="control-bar">
+        <button id="map-toggle-btn" class="hud-btn">&#x1F30C; ORBITAL SECTOR MAP</button>
+        <span class="hud-subtext">Click glowing radar beacons on the artifact to engage sensors and story logs.</span>
+      </footer>
+    </div>
+  </div>
+
+  <!-- NƠI CHÈN CÁC FILE ÂM THANH / SFX / NHẠC NỀN -->
+  <!-- /* CHÈN NHẠC NỀN KHÔNG GIAN TẠI ĐÂY (VD: src="assets/audio/bgm_space.mp3") */ -->
+  <audio id="bgm-player" loop preload="auto"></audio>
+  <!-- /* CHÈN ÂM THANH KHI TRẢ LỜI ĐÚNG / KÍCH HOẠT LÁ CHẮN */ -->
+  <audio id="sfx-correct" preload="auto"></audio>
+  <!-- /* CHÈN ÂM THANH CẢNH BÁO KHI TRẢ LỜI SAI */ -->
+  <audio id="sfx-wrong" preload="auto"></audio>
+
+  <script src="game.js"></script>
+</body>
+</html>
+
+<audio id="bgm-player" src="assets/audio/bgm_space.mp3" loop preload="auto"></audio>
+<audio id="sfx-correct" src="assets/audio/shield_up.mp3" preload="auto"></audio>
+<audio id="sfx-wrong" src="assets/audio/alarm_buzz.mp3" preload="auto"></audio>
